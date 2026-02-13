@@ -1,11 +1,7 @@
 package com.dark.origin;
 
-import com.dark.entity.Course;
-import com.dark.entity.Student;
-import com.dark.entity.Teacher;
-import com.dark.service.LoginService;
-import com.dark.service.StudentService; // Rename your file to this, or change this import
-import com.dark.service.TeacherService; // Rename your file to this, or change this import
+import com.dark.entity.*;
+import com.dark.service.*;
 
 import java.util.List;
 import java.util.Scanner;
