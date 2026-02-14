@@ -10,10 +10,8 @@ import com.dark.service.TeacherService;
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import javax.swing.border.LineBorder;
-import javax.swing.event.ListSelectionEvent;
-import javax.swing.plaf.nimbus.NimbusLookAndFeel;
 import java.awt.*;
-import java.util.List;
+
 
 public class Main extends JFrame {
 
@@ -23,8 +21,8 @@ public class Main extends JFrame {
     private final TeacherService teacherService = new TeacherService();
 
     // --- LAYOUT & PANELS ---
-    private CardLayout cardLayout = new CardLayout();
-    private JPanel mainPanel = new JPanel(cardLayout);
+    private final CardLayout cardLayout = new CardLayout();
+    private final JPanel mainPanel = new JPanel(cardLayout);
 
     // --- KEYS ---
     private static final String LOGIN_PANEL = "LOGIN";
@@ -37,12 +35,12 @@ public class Main extends JFrame {
     private static final Color SUCCESS_COLOR = new Color(46, 204, 113);  // Emerald Green
     private static final Color DANGER_COLOR  = new Color(231, 76, 60);   // Alizarin Red
     private static final Color TEXT_COLOR    = Color.WHITE;
-    private static final Font HEADER_FONT    = new Font("Segoe UI", Font.BOLD, 24);
-    private static final Font LABEL_FONT     = new Font("Segoe UI", Font.PLAIN, 14);
+    private static final Font HEADER_FONT    = new Font("Segue UI", Font.BOLD, 24);
+    private static final Font LABEL_FONT     = new Font("Segue UI", Font.PLAIN, 14);
 
     // --- PANEL INSTANCES ---
-    private StudentPanel studentPanel;
-    private TeacherPanel teacherPanel;
+    private final StudentPanel studentPanel;
+    private final TeacherPanel teacherPanel;
 
     public Main() {
         setTitle("University Course Registration System");
@@ -88,7 +86,7 @@ public class Main extends JFrame {
 
             // Icon (Simple text fallback if no image)
             JLabel iconLabel = new JLabel("🎓", SwingConstants.CENTER);
-            iconLabel.setFont(new Font("Segoe UI Emoji", Font.PLAIN, 60));
+            iconLabel.setFont(new Font("Segue UI Emoji", Font.PLAIN, 60));
             iconLabel.setForeground(Color.ORANGE);
 
             JPanel container = new JPanel(new GridBagLayout());
@@ -106,7 +104,7 @@ public class Main extends JFrame {
 
             boxGbc.gridy++;
             JLabel subTitle = new JLabel("Course Registration");
-            subTitle.setFont(new Font("Segoe UI", Font.BOLD, 18));
+            subTitle.setFont(new Font("Segue UI", Font.BOLD, 18));
             subTitle.setForeground(PRIMARY_COLOR);
             container.add(subTitle, boxGbc);
 
@@ -161,12 +159,12 @@ public class Main extends JFrame {
     // 2. STUDENT PANEL (STYLED)
     // ==========================================
     class StudentPanel extends JPanel {
-        private JLabel nameLbl = new JLabel();
-        private JLabel rollLbl = new JLabel();
-        private DefaultListModel<Course> availableModel = new DefaultListModel<>();
-        private DefaultListModel<Course> myModel = new DefaultListModel<>();
-        private JList<Course> availableCoursesList = new JList<>(availableModel);
-        private JList<Course> myCoursesList = new JList<>(myModel);
+        private final JLabel nameLbl = new JLabel();
+        private final JLabel rollLbl = new JLabel();
+        private final DefaultListModel<Course> availableModel = new DefaultListModel<>();
+        private final DefaultListModel<Course> myModel = new DefaultListModel<>();
+        private final JList<Course> availableCoursesList = new JList<>(availableModel);
+        private final JList<Course> myCoursesList = new JList<>(myModel);
 
         private Student currentStudent;
 
@@ -178,7 +176,7 @@ public class Main extends JFrame {
             header.setBackground(PRIMARY_COLOR);
             header.setBorder(new EmptyBorder(15, 20, 15, 20));
 
-            nameLbl.setFont(new Font("Segoe UI", Font.BOLD, 20));
+            nameLbl.setFont(new Font("Segue UI", Font.BOLD, 20));
             nameLbl.setForeground(TEXT_COLOR);
             rollLbl.setFont(LABEL_FONT);
             rollLbl.setForeground(new Color(200, 200, 200));
@@ -189,7 +187,7 @@ public class Main extends JFrame {
             textPanel.add(rollLbl);
 
             JLabel avatar = new JLabel("👤");
-            avatar.setFont(new Font("Segoe UI Emoji", Font.PLAIN, 40));
+            avatar.setFont(new Font("Segue UI Emoji", Font.PLAIN, 40));
             avatar.setForeground(Color.WHITE);
 
             header.add(textPanel, BorderLayout.CENTER);
@@ -272,10 +270,10 @@ public class Main extends JFrame {
     // 3. TEACHER PANEL (STYLED)
     // ==========================================
     class TeacherPanel extends JPanel {
-        private JLabel adminLbl = new JLabel();
-        private DefaultListModel<Student> studentListModel = new DefaultListModel<>();
-        private JList<Student> studentList = new JList<>(studentListModel);
-        private DefaultListModel<String> detailsModel = new DefaultListModel<>();
+        private final JLabel adminLbl = new JLabel();
+        private final DefaultListModel<Student> studentListModel = new DefaultListModel<>();
+        private final JList<Student> studentList = new JList<>(studentListModel);
+        private final DefaultListModel<String> detailsModel = new DefaultListModel<>();
 
         public TeacherPanel() {
             setLayout(new BorderLayout());
@@ -285,7 +283,7 @@ public class Main extends JFrame {
             header.setBackground(PRIMARY_COLOR);
             header.setBorder(new EmptyBorder(15, 20, 15, 20));
 
-            adminLbl.setFont(new Font("Segoe UI", Font.BOLD, 20));
+            adminLbl.setFont(new Font("Segue UI", Font.BOLD, 20));
             adminLbl.setForeground(TEXT_COLOR);
 
             JButton logout = new JButton("Logout");
@@ -341,7 +339,7 @@ public class Main extends JFrame {
             add(splitPane, BorderLayout.CENTER);
 
             // Logic
-            refreshBtn.addActionListener(e -> loadData((Teacher) null));
+            refreshBtn.addActionListener(e -> loadData(null));
             addBtn.addActionListener(e -> addStudentDialog());
 
             studentList.addListSelectionListener(e -> {
@@ -361,7 +359,7 @@ public class Main extends JFrame {
             int op = JOptionPane.showConfirmDialog(this, msg, "New Student", JOptionPane.OK_CANCEL_OPTION);
             if (op == JOptionPane.OK_OPTION) {
                 teacherService.addStudent(roll.getText(), name.getText(), new String(pass.getPassword()));
-                loadData((Teacher) null);
+                loadData(null);
             }
         }
 
@@ -392,7 +390,7 @@ public class Main extends JFrame {
                 new EmptyBorder(10, 10, 10, 10)
         ));
         JLabel l = new JLabel(title);
-        l.setFont(new Font("Segoe UI", Font.BOLD, 14));
+        l.setFont(new Font("Segue UI", Font.BOLD, 14));
         l.setForeground(PRIMARY_COLOR);
         l.setBorder(new EmptyBorder(0, 0, 10, 0));
         p.add(l, BorderLayout.NORTH);
@@ -404,7 +402,7 @@ public class Main extends JFrame {
         btn.setBackground(bg);
         btn.setForeground(Color.WHITE);
         btn.setFocusPainted(false);
-        btn.setFont(new Font("Segoe UI", Font.BOLD, 12));
+        btn.setFont(new Font("Segue UI", Font.BOLD, 12));
         btn.setBorder(new EmptyBorder(8, 15, 8, 15));
         btn.setCursor(new Cursor(Cursor.HAND_CURSOR));
     }
