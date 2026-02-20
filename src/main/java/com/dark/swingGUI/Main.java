@@ -10,9 +10,10 @@ import com.dark.service.TeacherService;
 
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
-import javax.swing.border.LineBorder;
 import java.awt.*;
-
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.awt.geom.RoundRectangle2D;
 
 public class Main extends JFrame {
 
@@ -30,24 +31,39 @@ public class Main extends JFrame {
     private static final String STUDENT_PANEL = "STUDENT";
     private static final String TEACHER_PANEL = "TEACHER";
 
-    // --- THEME COLORS ---
-    private static final Color PRIMARY_COLOR = new Color(44, 62, 80);    // Dark Navy
-    private static final Color ACCENT_COLOR  = new Color(52, 152, 219);  // Bright Blue
-    private static final Color SUCCESS_COLOR = new Color(46, 204, 113);  // Emerald Green
-    private static final Color DANGER_COLOR  = new Color(231, 76, 60);   // Alizarin Red
-    private static final Color TEXT_COLOR    = Color.WHITE;
-    private static final Font HEADER_FONT    = new Font("Segue UI", Font.BOLD, 24);
-    private static final Font LABEL_FONT     = new Font("Segue UI", Font.PLAIN, 14);
+    // --- MODERN THEME COLORS ---
+    private static final Color BG_COLOR = new Color(243, 244, 246);       // Tailwind Gray 100
+    private static final Color CARD_COLOR = Color.WHITE;
+    private static final Color PRIMARY_COLOR = new Color(79, 70, 229);    // Indigo 600
+    private static final Color PRIMARY_HOVER = new Color(67, 56, 202);    // Indigo 700
+    private static final Color SUCCESS_COLOR = new Color(16, 185, 129);   // Emerald 500
+    private static final Color SUCCESS_HOVER = new Color(5, 150, 105);    // Emerald 600
+    private static final Color DANGER_COLOR = new Color(239, 68, 68);     // Red 500
+    private static final Color DANGER_HOVER = new Color(220, 38, 38);     // Red 600
+    private static final Color TEXT_DARK = new Color(17, 24, 39);         // Gray 900
+    private static final Color TEXT_MUTED = new Color(107, 114, 128);     // Gray 500
+
+    private static final Font HEADER_FONT = new Font("Segoe UI", Font.BOLD, 28);
+    private static final Font TITLE_FONT = new Font("Segoe UI", Font.BOLD, 18);
+    private static final Font REGULAR_FONT = new Font("Segoe UI", Font.PLAIN, 14);
 
     // --- PANEL INSTANCES ---
     private final StudentPanel studentPanel;
     private final TeacherPanel teacherPanel;
 
     public Main() {
+        // Setup modern Look and Feel base
+        try {
+            UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+        } catch (Exception e) {
+            System.out.println("Error loading Look and Feel");
+        }
+
         setTitle("University Course Registration System");
-        setSize(1000, 700);
+        setSize(1050, 750);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLocationRelativeTo(null);
+        getContentPane().setBackground(BG_COLOR);
 
         // Initialize Panels
         LoginPanel loginPanel = new LoginPanel();
@@ -63,69 +79,81 @@ public class Main extends JFrame {
     }
 
     // ==========================================
-    // 1. LOGIN PANEL (STYLED)
+    // 1. LOGIN PANEL
     // ==========================================
     class LoginPanel extends JPanel {
-        JTextField userField = new JTextField(15);
-        JPasswordField passField = new JPasswordField(15);
+        JTextField userField = new ModernTextField(20);
+        JPasswordField passField = new ModernPasswordField(20);
         JComboBox<String> roleCombo = new JComboBox<>(new String[]{"Student", "Teacher"});
-        JButton loginBtn = new JButton("Login");
+        ModernButton loginBtn = new ModernButton("Sign In", PRIMARY_COLOR, PRIMARY_HOVER);
 
         public LoginPanel() {
             setLayout(new GridBagLayout());
-            setBackground(PRIMARY_COLOR); // Dark Background
+            setBackground(BG_COLOR);
+
+            RoundedPanel container = new RoundedPanel(20, CARD_COLOR);
+            container.setLayout(new GridBagLayout());
+            container.setBorder(new EmptyBorder(40, 50, 40, 50));
 
             GridBagConstraints gbc = new GridBagConstraints();
-            gbc.insets = new Insets(10, 10, 10, 10);
+            gbc.insets = new Insets(10, 5, 10, 5);
             gbc.fill = GridBagConstraints.HORIZONTAL;
 
             // --- HEADER ---
-            JLabel title = new JLabel("University Portal");
-            title.setFont(HEADER_FONT);
-            title.setForeground(TEXT_COLOR);
-            title.setHorizontalAlignment(SwingConstants.CENTER);
-
-            // Icon (Simple text fallback if no image)
             JLabel iconLabel = new JLabel("🎓", SwingConstants.CENTER);
-            iconLabel.setFont(new Font("Segue UI Emoji", Font.PLAIN, 60));
-            iconLabel.setForeground(Color.ORANGE);
+            iconLabel.setFont(new Font("Segoe UI Emoji", Font.PLAIN, 50));
 
-            JPanel container = new JPanel(new GridBagLayout());
-            container.setBackground(Color.WHITE);
-            container.setBorder(BorderFactory.createCompoundBorder(
-                    new LineBorder(Color.GRAY, 1),
-                    new EmptyBorder(30, 50, 30, 50)
-            ));
+            JLabel title = new JLabel("Welcome Back", SwingConstants.CENTER);
+            title.setFont(HEADER_FONT);
+            title.setForeground(TEXT_DARK);
 
-            // Add Components to White Box
-            GridBagConstraints boxGbc = new GridBagConstraints();
-            boxGbc.insets = new Insets(5, 5, 5, 5);
-            boxGbc.gridx = 0; boxGbc.gridy = 0; boxGbc.gridwidth = 2;
-            container.add(iconLabel, boxGbc);
+            JLabel subTitle = new JLabel("Please enter your details to sign in.", SwingConstants.CENTER);
+            subTitle.setFont(REGULAR_FONT);
+            subTitle.setForeground(TEXT_MUTED);
 
-            boxGbc.gridy++;
-            JLabel subTitle = new JLabel("Course Registration");
-            subTitle.setFont(new Font("Segue UI", Font.BOLD, 18));
-            subTitle.setForeground(PRIMARY_COLOR);
-            container.add(subTitle, boxGbc);
+            gbc.gridx = 0; gbc.gridy = 0; gbc.gridwidth = 2;
+            container.add(iconLabel, gbc);
+            gbc.gridy++; gbc.insets = new Insets(0, 5, 5, 5);
+            container.add(title, gbc);
+            gbc.gridy++; gbc.insets = new Insets(0, 5, 25, 5);
+            container.add(subTitle, gbc);
 
-            boxGbc.gridy++; boxGbc.gridwidth = 1;
-            container.add(new JLabel("User ID:"), boxGbc);
-            boxGbc.gridx = 1; container.add(userField, boxGbc);
+            // --- INPUTS ---
+            gbc.gridy++; gbc.gridwidth = 1; gbc.insets = new Insets(10, 5, 5, 5);
+            JLabel userLbl = new JLabel("User ID");
+            userLbl.setFont(TITLE_FONT.deriveFont(14f));
+            userLbl.setForeground(TEXT_DARK);
+            container.add(userLbl, gbc);
 
-            boxGbc.gridy++; boxGbc.gridx = 0;
-            container.add(new JLabel("Password:"), boxGbc);
-            boxGbc.gridx = 1; container.add(passField, boxGbc);
+            gbc.gridx = 1;
+            container.add(userField, gbc);
 
-            boxGbc.gridy++; boxGbc.gridx = 0;
-            container.add(new JLabel("Role:"), boxGbc);
-            boxGbc.gridx = 1; container.add(roleCombo, boxGbc);
+            gbc.gridy++; gbc.gridx = 0;
+            JLabel passLbl = new JLabel("Password");
+            passLbl.setFont(TITLE_FONT.deriveFont(14f));
+            passLbl.setForeground(TEXT_DARK);
+            container.add(passLbl, gbc);
 
-            boxGbc.gridy++; boxGbc.gridx = 0; boxGbc.gridwidth = 2;
-            styleButton(loginBtn, ACCENT_COLOR);
-            container.add(loginBtn, boxGbc);
+            gbc.gridx = 1;
+            container.add(passField, gbc);
 
-            add(container); // Add white box to dark background
+            gbc.gridy++; gbc.gridx = 0;
+            JLabel roleLbl = new JLabel("Role");
+            roleLbl.setFont(TITLE_FONT.deriveFont(14f));
+            roleLbl.setForeground(TEXT_DARK);
+            container.add(roleLbl, gbc);
+
+            gbc.gridx = 1;
+            roleCombo.setFont(REGULAR_FONT);
+            roleCombo.setBackground(Color.WHITE);
+            container.add(roleCombo, gbc);
+
+            // --- BUTTON ---
+            gbc.gridy++; gbc.gridx = 0; gbc.gridwidth = 2; gbc.insets = new Insets(25, 5, 5, 5);
+            loginBtn.setPreferredSize(new Dimension(250, 45));
+            container.add(loginBtn, gbc);
+
+            add(container);
 
             // Logic
             loginBtn.addActionListener(e -> performLogin());
@@ -142,7 +170,7 @@ public class Main extends JFrame {
                     studentPanel.loadData(s);
                     cardLayout.show(mainPanel, STUDENT_PANEL);
                 } else {
-                    JOptionPane.showMessageDialog(this, "Invalid Student Credentials", "Error", JOptionPane.ERROR_MESSAGE);
+                    showError("Invalid Student Credentials");
                 }
             } else {
                 Teacher t = loginService.loginTeacher(id, pass);
@@ -150,14 +178,14 @@ public class Main extends JFrame {
                     teacherPanel.loadData(t);
                     cardLayout.show(mainPanel, TEACHER_PANEL);
                 } else {
-                    JOptionPane.showMessageDialog(this, "Invalid Admin Credentials", "Error", JOptionPane.ERROR_MESSAGE);
+                    showError("Invalid Teacher Credentials");
                 }
             }
         }
     }
 
     // ==========================================
-    // 2. STUDENT PANEL (STYLED)
+    // 2. STUDENT PANEL
     // ==========================================
     class StudentPanel extends JPanel {
         private final JLabel nameLbl = new JLabel();
@@ -170,64 +198,56 @@ public class Main extends JFrame {
         private Student currentStudent;
 
         public StudentPanel() {
-            setLayout(new BorderLayout());
+            setLayout(new BorderLayout(0, 20));
+            setBackground(BG_COLOR);
+            setBorder(new EmptyBorder(20, 20, 20, 20));
 
             // --- HEADER ---
-            JPanel header = new JPanel(new BorderLayout());
-            header.setBackground(PRIMARY_COLOR);
-            header.setBorder(new EmptyBorder(15, 20, 15, 20));
+            RoundedPanel header = new RoundedPanel(15, PRIMARY_COLOR);
+            header.setLayout(new BorderLayout());
+            header.setBorder(new EmptyBorder(20, 30, 20, 30));
 
-            nameLbl.setFont(new Font("Segue UI", Font.BOLD, 20));
-            nameLbl.setForeground(TEXT_COLOR);
-            rollLbl.setFont(LABEL_FONT);
-            rollLbl.setForeground(new Color(200, 200, 200));
+            nameLbl.setFont(HEADER_FONT.deriveFont(24f));
+            nameLbl.setForeground(Color.WHITE);
+            rollLbl.setFont(REGULAR_FONT);
+            rollLbl.setForeground(new Color(224, 231, 255)); // Light indigo
 
             JPanel textPanel = new JPanel(new GridLayout(2, 1));
             textPanel.setOpaque(false);
             textPanel.add(nameLbl);
             textPanel.add(rollLbl);
 
-            JLabel avatar = new JLabel("👤");
-            avatar.setFont(new Font("Segue UI Emoji", Font.PLAIN, 40));
-            avatar.setForeground(Color.WHITE);
+            ModernButton logoutBtn = new ModernButton("Logout", new Color(255,255,255, 50), new Color(255,255,255, 80));
+            logoutBtn.setForeground(Color.WHITE);
+            logoutBtn.addActionListener(e -> cardLayout.show(mainPanel, LOGIN_PANEL));
 
             header.add(textPanel, BorderLayout.CENTER);
-            header.add(avatar, BorderLayout.EAST);
+            header.add(logoutBtn, BorderLayout.EAST);
             add(header, BorderLayout.NORTH);
 
             // --- CONTENT ---
             JPanel content = new JPanel(new GridLayout(1, 2, 20, 0));
-            content.setBorder(new EmptyBorder(20, 20, 20, 20));
-            content.setBackground(new Color(236, 240, 241)); // Light Gray
+            content.setOpaque(false);
 
-            // LEFT: Available
-            JPanel left = createCard("Available Courses");
-            JButton registerBtn = new JButton("Register Selected");
-            styleButton(registerBtn, SUCCESS_COLOR);
+            // Left: Available
+            RoundedPanel left = createModernCard("Available Courses");
+            styleList(availableCoursesList);
+            ModernButton registerBtn = new ModernButton("Register Selected", SUCCESS_COLOR, SUCCESS_HOVER);
 
-            left.add(new JScrollPane(availableCoursesList), BorderLayout.CENTER);
+            left.add(createScrollPane(availableCoursesList), BorderLayout.CENTER);
             left.add(registerBtn, BorderLayout.SOUTH);
 
-            // RIGHT: My Courses
-            JPanel right = createCard("My Schedule");
-            JButton dropBtn = new JButton("Drop Selected");
-            styleButton(dropBtn, DANGER_COLOR);
+            // Right: My Courses
+            RoundedPanel right = createModernCard("My Schedule");
+            styleList(myCoursesList);
+            ModernButton dropBtn = new ModernButton("Drop Selected", DANGER_COLOR, DANGER_HOVER);
 
-            right.add(new JScrollPane(myCoursesList), BorderLayout.CENTER);
+            right.add(createScrollPane(myCoursesList), BorderLayout.CENTER);
             right.add(dropBtn, BorderLayout.SOUTH);
 
             content.add(left);
             content.add(right);
             add(content, BorderLayout.CENTER);
-
-            // --- FOOTER ---
-            JPanel footer = new JPanel(new FlowLayout(FlowLayout.RIGHT));
-            footer.setBackground(Color.WHITE);
-            JButton logoutBtn = new JButton("Logout");
-            styleButton(logoutBtn, Color.GRAY);
-            logoutBtn.addActionListener(e -> cardLayout.show(mainPanel, LOGIN_PANEL));
-            footer.add(logoutBtn);
-            add(footer, BorderLayout.SOUTH);
 
             // Logic
             registerBtn.addActionListener(e -> registerAction());
@@ -238,7 +258,7 @@ public class Main extends JFrame {
             Course selected = availableCoursesList.getSelectedValue();
             if (selected == null) return;
             String msg = studentService.registerStudentForCourse(currentStudent.getRollNumber(), selected.getCourseId());
-            JOptionPane.showMessageDialog(this, msg);
+            showSuccess(msg);
             refreshLists();
         }
 
@@ -246,13 +266,13 @@ public class Main extends JFrame {
             Course selected = myCoursesList.getSelectedValue();
             if (selected == null) return;
             String msg = studentService.dropCourse(currentStudent.getRollNumber(), selected.getCourseId());
-            JOptionPane.showMessageDialog(this, msg);
+            showSuccess(msg);
             refreshLists();
         }
 
         public void loadData(Student s) {
             this.currentStudent = s;
-            nameLbl.setText("Welcome, " + s.getName());
+            nameLbl.setText("Welcome back, " + s.getName());
             rollLbl.setText("Roll No: " + s.getRollNumber());
             refreshLists();
         }
@@ -268,7 +288,7 @@ public class Main extends JFrame {
     }
 
     // ==========================================
-    // 3. TEACHER PANEL (STYLED)
+    // 3. TEACHER PANEL
     // ==========================================
     class TeacherPanel extends JPanel {
         private final JLabel adminLbl = new JLabel();
@@ -277,67 +297,86 @@ public class Main extends JFrame {
         private final DefaultListModel<String> detailsModel = new DefaultListModel<>();
 
         public TeacherPanel() {
-            setLayout(new BorderLayout());
+            setLayout(new BorderLayout(0, 20));
+            setBackground(BG_COLOR);
+            setBorder(new EmptyBorder(20, 20, 20, 20));
 
             // --- HEADER ---
-            JPanel header = new JPanel(new BorderLayout());
-            header.setBackground(PRIMARY_COLOR);
-            header.setBorder(new EmptyBorder(15, 20, 15, 20));
+            RoundedPanel header = new RoundedPanel(15, TEXT_DARK);
+            header.setLayout(new BorderLayout());
+            header.setBorder(new EmptyBorder(20, 30, 20, 30));
 
-            adminLbl.setFont(new Font("Segue UI", Font.BOLD, 20));
-            adminLbl.setForeground(TEXT_COLOR);
+            adminLbl.setFont(HEADER_FONT.deriveFont(24f));
+            adminLbl.setForeground(Color.WHITE);
 
-            JButton logout = new JButton("Logout");
-            styleButton(logout, DANGER_COLOR);
-            logout.addActionListener(e -> cardLayout.show(mainPanel, LOGIN_PANEL));
+            ModernButton logoutBtn = new ModernButton("Logout", DANGER_COLOR, DANGER_HOVER);
+            logoutBtn.addActionListener(e -> cardLayout.show(mainPanel, LOGIN_PANEL));
 
             header.add(adminLbl, BorderLayout.WEST);
-            header.add(logout, BorderLayout.EAST);
+            header.add(logoutBtn, BorderLayout.EAST);
             add(header, BorderLayout.NORTH);
 
             // --- CONTENT ---
-            JSplitPane splitPane = new JSplitPane();
-            splitPane.setDividerLocation(300);
-            splitPane.setBorder(null);
+            JPanel content = new JPanel(new GridLayout(1, 2, 20, 0));
+            content.setOpaque(false);
 
             // LEFT: Student List
-            JPanel left = createCard("Student Directory");
+            RoundedPanel left = createModernCard("Student Directory");
+            styleList(studentList);
 
-            JPanel btnPanel = new JPanel(new GridLayout(1, 2, 5, 0));
-            JButton addBtn = new JButton("Add Student");
-            styleButton(addBtn, ACCENT_COLOR);
-            JButton refreshBtn = new JButton("Refresh");
-            styleButton(refreshBtn, Color.GRAY);
+            JPanel btnPanel = new JPanel(new GridLayout(1, 2, 10, 0));
+            btnPanel.setOpaque(false);
+            btnPanel.setBorder(new EmptyBorder(10, 0, 0, 0));
+
+            ModernButton addBtn = new ModernButton("Add Student", PRIMARY_COLOR, PRIMARY_HOVER);
+            ModernButton refreshBtn = new ModernButton("Refresh", TEXT_MUTED, TEXT_DARK);
 
             btnPanel.add(addBtn);
             btnPanel.add(refreshBtn);
 
-            // Custom Renderer
             studentList.setCellRenderer(new DefaultListCellRenderer() {
                 @Override
                 public Component getListCellRendererComponent(JList<?> list, Object value, int index, boolean isSelected, boolean cellHasFocus) {
-                    super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
+                    JLabel label = (JLabel) super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
                     if (value instanceof Student) {
                         Student s = (Student) value;
-                        setText("👤 " + s.getName() + " (" + s.getRollNumber() + ")");
-                        setBorder(new EmptyBorder(5, 5, 5, 5));
+                        label.setText("  👤 " + s.getName() + " (" + s.getRollNumber() + ")");
                     }
-                    return this;
+                    label.setFont(REGULAR_FONT);
+                    label.setBorder(new EmptyBorder(10, 10, 10, 10));
+                    if (isSelected) {
+                        label.setBackground(new Color(237, 242, 255)); // Light indigo
+                        label.setForeground(PRIMARY_COLOR);
+                    }
+                    return label;
                 }
             });
 
-            left.add(new JScrollPane(studentList), BorderLayout.CENTER);
+            left.add(createScrollPane(studentList), BorderLayout.CENTER);
             left.add(btnPanel, BorderLayout.SOUTH);
 
             // RIGHT: Details
-            JPanel right = createCard("Academic Details");
+            RoundedPanel right = createModernCard("Academic Details");
             JList<String> detailsList = new JList<>(detailsModel);
-            detailsList.setBackground(new Color(250, 250, 250));
-            right.add(new JScrollPane(detailsList), BorderLayout.CENTER);
+            styleList(detailsList);
 
-            splitPane.setLeftComponent(left);
-            splitPane.setRightComponent(right);
-            add(splitPane, BorderLayout.CENTER);
+            // Details Custom Renderer for clean spacing
+            detailsList.setCellRenderer(new DefaultListCellRenderer(){
+                @Override
+                public Component getListCellRendererComponent(JList<?> list, Object value, int index, boolean isSelected, boolean cellHasFocus) {
+                    JLabel label = (JLabel) super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
+                    label.setFont(index == 0 ? TITLE_FONT : REGULAR_FONT);
+                    label.setForeground(index == 0 ? PRIMARY_COLOR : TEXT_DARK);
+                    label.setBorder(new EmptyBorder(8, 10, 8, 10));
+                    return label;
+                }
+            });
+
+            right.add(createScrollPane(detailsList), BorderLayout.CENTER);
+
+            content.add(left);
+            content.add(right);
+            add(content, BorderLayout.CENTER);
 
             // Logic
             refreshBtn.addActionListener(e -> loadData(null));
@@ -352,63 +391,165 @@ public class Main extends JFrame {
         }
 
         private void addStudentDialog() {
-            JTextField roll = new JTextField();
-            JTextField name = new JTextField();
-            JPasswordField pass = new JPasswordField();
-            Object[] msg = {"Roll No:", roll, "Name:", name, "Password:", pass};
+            JTextField roll = new ModernTextField(15);
+            JTextField name = new ModernTextField(15);
+            JPasswordField pass = new ModernPasswordField(15);
 
-            int op = JOptionPane.showConfirmDialog(this, msg, "New Student", JOptionPane.OK_CANCEL_OPTION);
+            JPanel panel = new JPanel(new GridLayout(3, 2, 10, 10));
+            panel.add(new JLabel("Roll No:")); panel.add(roll);
+            panel.add(new JLabel("Name:")); panel.add(name);
+            panel.add(new JLabel("Password:")); panel.add(pass);
+
+            int op = JOptionPane.showConfirmDialog(this, panel, "Add New Student", JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE);
             if (op == JOptionPane.OK_OPTION) {
                 teacherService.addStudent(roll.getText(), name.getText(), new String(pass.getPassword()));
                 loadData(null);
+                showSuccess("Student added successfully!");
             }
         }
 
         private void showDetails(Student s) {
             detailsModel.clear();
             Student fresh = loginService.loginStudent(s.getRollNumber(), s.getPassword());
-            detailsModel.addElement("DETAILS FOR: " + fresh.getName());
-            detailsModel.addElement("--------------------------------");
-            if(fresh.getRegisteredCourses().isEmpty()) detailsModel.addElement("No courses registered.");
-            else fresh.getRegisteredCourses().forEach(c -> detailsModel.addElement("📘 " + c.getCourseName() + " (" + c.getCourseId() + ")"));
+            detailsModel.addElement("Records for " + fresh.getName());
+            detailsModel.addElement(" "); // spacer
+            if(fresh.getRegisteredCourses().isEmpty()) {
+                detailsModel.addElement("No courses currently registered.");
+            } else {
+                fresh.getRegisteredCourses().forEach(c -> detailsModel.addElement("📘 " + c.getCourseName() + " (" + c.getCourseId() + ")"));
+            }
         }
 
         public void loadData(Teacher t) {
-            if (t != null) adminLbl.setText("Admin Panel: " + t.getName());
+            if (t != null) adminLbl.setText("Admin Dashboard | " + t.getName());
             studentListModel.clear();
             teacherService.getAllStudents().forEach(studentListModel::addElement);
+            detailsModel.clear();
         }
     }
 
-    // --- UTILITY: HELPER METHODS ---
+    // ==========================================
+    // CUSTOM UI COMPONENTS & UTILS
+    // ==========================================
 
-    // Creates a standardized white card panel with a title
-    private JPanel createCard(String title) {
-        JPanel p = new JPanel(new BorderLayout());
-        p.setBackground(Color.WHITE);
-        p.setBorder(BorderFactory.createCompoundBorder(
-                new LineBorder(new Color(200, 200, 200), 1),
-                new EmptyBorder(10, 10, 10, 10)
-        ));
+    private RoundedPanel createModernCard(String title) {
+        RoundedPanel p = new RoundedPanel(15, CARD_COLOR);
+        p.setLayout(new BorderLayout(0, 10));
+        p.setBorder(new EmptyBorder(20, 20, 20, 20));
         JLabel l = new JLabel(title);
-        l.setFont(new Font("Segue UI", Font.BOLD, 14));
-        l.setForeground(PRIMARY_COLOR);
-        l.setBorder(new EmptyBorder(0, 0, 10, 0));
+        l.setFont(TITLE_FONT);
+        l.setForeground(TEXT_DARK);
         p.add(l, BorderLayout.NORTH);
         return p;
     }
 
-    // Styles buttons nicely
-    private void styleButton(JButton btn, Color bg) {
-        btn.setBackground(bg);
-        btn.setForeground(Color.WHITE);
-        btn.setFocusPainted(false);
-        btn.setFont(new Font("Segue UI", Font.BOLD, 12));
-        btn.setBorder(new EmptyBorder(8, 15, 8, 15));
-        btn.setCursor(new Cursor(Cursor.HAND_CURSOR));
+    private <T> void styleList(JList<T> list) {
+        list.setFont(REGULAR_FONT);
+        list.setForeground(TEXT_DARK);
+        list.setSelectionBackground(new Color(237, 242, 255));
+        list.setSelectionForeground(PRIMARY_COLOR);
+        list.setFixedCellHeight(40);
     }
 
+    private JScrollPane createScrollPane(Component comp) {
+        JScrollPane scroll = new JScrollPane(comp);
+        scroll.setBorder(BorderFactory.createLineBorder(new Color(229, 231, 235), 1)); // Very light gray border
+        scroll.getViewport().setBackground(Color.WHITE);
+        return scroll;
+    }
+
+    private void showError(String msg) {
+        JOptionPane.showMessageDialog(this, msg, "Error", JOptionPane.ERROR_MESSAGE);
+    }
+
+    private void showSuccess(String msg) {
+        JOptionPane.showMessageDialog(this, msg, "Success", JOptionPane.INFORMATION_MESSAGE);
+    }
+
+    // --- Custom Rounded Panel ---
+    static class RoundedPanel extends JPanel {
+        private final int radius;
+        private final Color bgColor;
+
+        public RoundedPanel(int radius, Color bgColor) {
+            this.radius = radius;
+            this.bgColor = bgColor;
+            setOpaque(false);
+        }
+
+        @Override
+        protected void paintComponent(Graphics g) {
+            Graphics2D g2 = (Graphics2D) g.create();
+            g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+            g2.setColor(bgColor);
+            g2.fill(new RoundRectangle2D.Float(0, 0, getWidth(), getHeight(), radius, radius));
+            g2.dispose();
+            super.paintComponent(g);
+        }
+    }
+
+    // --- Custom Modern Button ---
+    static class ModernButton extends JButton {
+        private Color normalColor;
+        private Color hoverColor;
+        private boolean isHovered = false;
+
+        public ModernButton(String text, Color normal, Color hover) {
+            super(text);
+            this.normalColor = normal;
+            this.hoverColor = hover;
+
+            setFont(new Font("Segoe UI", Font.BOLD, 14));
+            setForeground(Color.WHITE);
+            setFocusPainted(false);
+            setContentAreaFilled(false);
+            setBorderPainted(false);
+            setCursor(new Cursor(Cursor.HAND_CURSOR));
+            setPreferredSize(new Dimension(150, 40));
+
+            addMouseListener(new MouseAdapter() {
+                public void mouseEntered(MouseEvent e) { isHovered = true; repaint(); }
+                public void mouseExited(MouseEvent e) { isHovered = false; repaint(); }
+            });
+        }
+
+        @Override
+        protected void paintComponent(Graphics g) {
+            Graphics2D g2 = (Graphics2D) g.create();
+            g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+            g2.setColor(isHovered ? hoverColor : normalColor);
+            g2.fill(new RoundRectangle2D.Float(0, 0, getWidth(), getHeight(), 10, 10));
+            g2.dispose();
+            super.paintComponent(g);
+        }
+    }
+
+    // --- Custom Text Fields ---
+    static class ModernTextField extends JTextField {
+        public ModernTextField(int columns) {
+            super(columns);
+            setFont(REGULAR_FONT);
+            setBorder(BorderFactory.createCompoundBorder(
+                    BorderFactory.createLineBorder(new Color(209, 213, 219), 1),
+                    new EmptyBorder(10, 10, 10, 10)
+            ));
+        }
+    }
+
+    static class ModernPasswordField extends JPasswordField {
+        public ModernPasswordField(int columns) {
+            super(columns);
+            setFont(REGULAR_FONT);
+            setBorder(BorderFactory.createCompoundBorder(
+                    BorderFactory.createLineBorder(new Color(209, 213, 219), 1),
+                    new EmptyBorder(10, 10, 10, 10)
+            ));
+        }
+    }
+
+    // --- ENTRY POINT ---
     public static void main(String[] args) {
-        App.run();
+        // Ensure your App.run() triggers the visibility of this Main frame!
+        SwingUtilities.invokeLater(App::run);
     }
 }
