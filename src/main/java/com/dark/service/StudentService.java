@@ -19,8 +19,10 @@ public class StudentService {
             Student student = em.find(Student.class, rollNumber);
             Course course = em.find(Course.class, courseId);
 
-            if (student == null) return "Student not found.";
-            if (course == null) return "Course not found.";
+            if (student == null)
+                return "Student not found.";
+            if (course == null)
+                return "Course not found.";
 
             // 2. Check if already registered
             if (student.getRegisteredCourses().contains(course)) {
@@ -36,17 +38,27 @@ public class StudentService {
 
             tx.commit();
         } catch (Exception e) {
-            if(tx.isActive()) tx.rollback();
-            System.out.println("Error in registerStudentForCourse : " + e.getMessage() );
+            if (tx.isActive())
+                tx.rollback();
+            System.out.println("Error in registerStudentForCourse : " + e.getMessage());
             result = "Error during registration.";
         } finally {
             em.close();
         }
         return result;
     }
+
     public List<Course> getAllCourses() {
         try (EntityManager em = JPAUtil.getEntityManager()) {
             return em.createQuery("SELECT c FROM Course c", Course.class).getResultList();
+        }
+    }
+
+    public List<Student> getStudentsEnrolledInCourse(String courseId) {
+        try (EntityManager em = JPAUtil.getEntityManager()) {
+            return em.createQuery(
+                    "SELECT s FROM Student s JOIN s.registeredCourses c WHERE c.courseId = :cid",
+                    Student.class).setParameter("cid", courseId).getResultList();
         }
     }
     // ... existing registerStudentForCourse code ...
@@ -75,8 +87,9 @@ public class StudentService {
             }
             tx.commit();
         } catch (Exception e) {
-            if (tx.isActive()) tx.rollback();
-            System.out.println("Error in registerStudentForCourse : " + e.getMessage() );
+            if (tx.isActive())
+                tx.rollback();
+            System.out.println("Error in registerStudentForCourse : " + e.getMessage());
             result = "Error dropping course.";
         } finally {
             em.close();

@@ -14,6 +14,7 @@ import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.geom.RoundRectangle2D;
+import java.util.List;
 
 public class Main extends JFrame {
 
@@ -32,16 +33,16 @@ public class Main extends JFrame {
     private static final String TEACHER_PANEL = "TEACHER";
 
     // --- MODERN THEME COLORS ---
-    private static final Color BG_COLOR = new Color(243, 244, 246);       // Tailwind Gray 100
+    private static final Color BG_COLOR = new Color(243, 244, 246); // Tailwind Gray 100
     private static final Color CARD_COLOR = Color.WHITE;
-    private static final Color PRIMARY_COLOR = new Color(79, 70, 229);    // Indigo 600
-    private static final Color PRIMARY_HOVER = new Color(67, 56, 202);    // Indigo 700
-    private static final Color SUCCESS_COLOR = new Color(16, 185, 129);   // Emerald 500
-    private static final Color SUCCESS_HOVER = new Color(5, 150, 105);    // Emerald 600
-    private static final Color DANGER_COLOR = new Color(239, 68, 68);     // Red 500
-    private static final Color DANGER_HOVER = new Color(220, 38, 38);     // Red 600
-    private static final Color TEXT_DARK = new Color(17, 24, 39);         // Gray 900
-    private static final Color TEXT_MUTED = new Color(107, 114, 128);     // Gray 500
+    private static final Color PRIMARY_COLOR = new Color(79, 70, 229); // Indigo 600
+    private static final Color PRIMARY_HOVER = new Color(67, 56, 202); // Indigo 700
+    private static final Color SUCCESS_COLOR = new Color(16, 185, 129); // Emerald 500
+    private static final Color SUCCESS_HOVER = new Color(5, 150, 105); // Emerald 600
+    private static final Color DANGER_COLOR = new Color(239, 68, 68); // Red 500
+    private static final Color DANGER_HOVER = new Color(220, 38, 38); // Red 600
+    private static final Color TEXT_DARK = new Color(17, 24, 39); // Gray 900
+    private static final Color TEXT_MUTED = new Color(107, 114, 128); // Gray 500
 
     private static final Font HEADER_FONT = new Font("Segoe UI", Font.BOLD, 28);
     private static final Font TITLE_FONT = new Font("Segoe UI", Font.BOLD, 18);
@@ -84,7 +85,7 @@ public class Main extends JFrame {
     class LoginPanel extends JPanel {
         JTextField userField = new ModernTextField(20);
         JPasswordField passField = new ModernPasswordField(20);
-        JComboBox<String> roleCombo = new JComboBox<>(new String[]{"Student", "Teacher"});
+        JComboBox<String> roleCombo = new JComboBox<>(new String[] { "Student", "Teacher" });
         ModernButton loginBtn = new ModernButton("Sign In", PRIMARY_COLOR, PRIMARY_HOVER);
 
         public LoginPanel() {
@@ -111,15 +112,21 @@ public class Main extends JFrame {
             subTitle.setFont(REGULAR_FONT);
             subTitle.setForeground(TEXT_MUTED);
 
-            gbc.gridx = 0; gbc.gridy = 0; gbc.gridwidth = 2;
+            gbc.gridx = 0;
+            gbc.gridy = 0;
+            gbc.gridwidth = 2;
             container.add(iconLabel, gbc);
-            gbc.gridy++; gbc.insets = new Insets(0, 5, 5, 5);
+            gbc.gridy++;
+            gbc.insets = new Insets(0, 5, 5, 5);
             container.add(title, gbc);
-            gbc.gridy++; gbc.insets = new Insets(0, 5, 25, 5);
+            gbc.gridy++;
+            gbc.insets = new Insets(0, 5, 25, 5);
             container.add(subTitle, gbc);
 
             // --- INPUTS ---
-            gbc.gridy++; gbc.gridwidth = 1; gbc.insets = new Insets(10, 5, 5, 5);
+            gbc.gridy++;
+            gbc.gridwidth = 1;
+            gbc.insets = new Insets(10, 5, 5, 5);
             JLabel userLbl = new JLabel("User ID");
             userLbl.setFont(TITLE_FONT.deriveFont(14f));
             userLbl.setForeground(TEXT_DARK);
@@ -128,7 +135,8 @@ public class Main extends JFrame {
             gbc.gridx = 1;
             container.add(userField, gbc);
 
-            gbc.gridy++; gbc.gridx = 0;
+            gbc.gridy++;
+            gbc.gridx = 0;
             JLabel passLbl = new JLabel("Password");
             passLbl.setFont(TITLE_FONT.deriveFont(14f));
             passLbl.setForeground(TEXT_DARK);
@@ -137,7 +145,8 @@ public class Main extends JFrame {
             gbc.gridx = 1;
             container.add(passField, gbc);
 
-            gbc.gridy++; gbc.gridx = 0;
+            gbc.gridy++;
+            gbc.gridx = 0;
             JLabel roleLbl = new JLabel("Role");
             roleLbl.setFont(TITLE_FONT.deriveFont(14f));
             roleLbl.setForeground(TEXT_DARK);
@@ -149,7 +158,10 @@ public class Main extends JFrame {
             container.add(roleCombo, gbc);
 
             // --- BUTTON ---
-            gbc.gridy++; gbc.gridx = 0; gbc.gridwidth = 2; gbc.insets = new Insets(25, 5, 5, 5);
+            gbc.gridy++;
+            gbc.gridx = 0;
+            gbc.gridwidth = 2;
+            gbc.insets = new Insets(25, 5, 5, 5);
             loginBtn.setPreferredSize(new Dimension(250, 45));
             container.add(loginBtn, gbc);
 
@@ -217,7 +229,8 @@ public class Main extends JFrame {
             textPanel.add(nameLbl);
             textPanel.add(rollLbl);
 
-            ModernButton logoutBtn = new ModernButton("Logout", new Color(255,255,255, 50), new Color(255,255,255, 80));
+            ModernButton logoutBtn = new ModernButton("Logout", new Color(255, 255, 255, 50),
+                    new Color(255, 255, 255, 80));
             logoutBtn.setForeground(Color.WHITE);
             logoutBtn.addActionListener(e -> cardLayout.show(mainPanel, LOGIN_PANEL));
 
@@ -252,19 +265,42 @@ public class Main extends JFrame {
             // Logic
             registerBtn.addActionListener(e -> registerAction());
             dropBtn.addActionListener(e -> dropAction());
+
+            // Double-click to view course details
+            availableCoursesList.addMouseListener(new MouseAdapter() {
+                public void mouseClicked(MouseEvent e) {
+                    if (e.getClickCount() == 2) {
+                        Course selected = availableCoursesList.getSelectedValue();
+                        if (selected != null)
+                            showCourseDetailsPopup(selected);
+                    }
+                }
+            });
+            myCoursesList.addMouseListener(new MouseAdapter() {
+                public void mouseClicked(MouseEvent e) {
+                    if (e.getClickCount() == 2) {
+                        Course selected = myCoursesList.getSelectedValue();
+                        if (selected != null)
+                            showCourseDetailsPopup(selected);
+                    }
+                }
+            });
         }
 
         private void registerAction() {
             Course selected = availableCoursesList.getSelectedValue();
-            if (selected == null) return;
-            String msg = studentService.registerStudentForCourse(currentStudent.getRollNumber(), selected.getCourseId());
+            if (selected == null)
+                return;
+            String msg = studentService.registerStudentForCourse(currentStudent.getRollNumber(),
+                    selected.getCourseId());
             showSuccess(msg);
             refreshLists();
         }
 
         private void dropAction() {
             Course selected = myCoursesList.getSelectedValue();
-            if (selected == null) return;
+            if (selected == null)
+                return;
             String msg = studentService.dropCourse(currentStudent.getRollNumber(), selected.getCourseId());
             showSuccess(msg);
             refreshLists();
@@ -336,8 +372,10 @@ public class Main extends JFrame {
 
             studentList.setCellRenderer(new DefaultListCellRenderer() {
                 @Override
-                public Component getListCellRendererComponent(JList<?> list, Object value, int index, boolean isSelected, boolean cellHasFocus) {
-                    JLabel label = (JLabel) super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
+                public Component getListCellRendererComponent(JList<?> list, Object value, int index,
+                        boolean isSelected, boolean cellHasFocus) {
+                    JLabel label = (JLabel) super.getListCellRendererComponent(list, value, index, isSelected,
+                            cellHasFocus);
                     if (value instanceof Student) {
                         Student s = (Student) value;
                         label.setText("  👤 " + s.getName() + " (" + s.getRollNumber() + ")");
@@ -361,10 +399,12 @@ public class Main extends JFrame {
             styleList(detailsList);
 
             // Details Custom Renderer for clean spacing
-            detailsList.setCellRenderer(new DefaultListCellRenderer(){
+            detailsList.setCellRenderer(new DefaultListCellRenderer() {
                 @Override
-                public Component getListCellRendererComponent(JList<?> list, Object value, int index, boolean isSelected, boolean cellHasFocus) {
-                    JLabel label = (JLabel) super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
+                public Component getListCellRendererComponent(JList<?> list, Object value, int index,
+                        boolean isSelected, boolean cellHasFocus) {
+                    JLabel label = (JLabel) super.getListCellRendererComponent(list, value, index, isSelected,
+                            cellHasFocus);
                     label.setFont(index == 0 ? TITLE_FONT : REGULAR_FONT);
                     label.setForeground(index == 0 ? PRIMARY_COLOR : TEXT_DARK);
                     label.setBorder(new EmptyBorder(8, 10, 8, 10));
@@ -385,7 +425,33 @@ public class Main extends JFrame {
             studentList.addListSelectionListener(e -> {
                 if (!e.getValueIsAdjusting()) {
                     Student s = studentList.getSelectedValue();
-                    if (s != null) showDetails(s);
+                    if (s != null)
+                        showDetails(s);
+                }
+            });
+
+            // Double-click on course entry in details panel to view course details
+            detailsList.addMouseListener(new MouseAdapter() {
+                public void mouseClicked(MouseEvent e) {
+                    if (e.getClickCount() == 2) {
+                        String selected = detailsList.getSelectedValue();
+                        if (selected != null && selected.contains("📘")) {
+                            // Extract course ID from format: "📘 CourseName (CourseId)"
+                            int start = selected.lastIndexOf('(');
+                            int end = selected.lastIndexOf(')');
+                            if (start != -1 && end != -1 && end > start) {
+                                String courseId = selected.substring(start + 1, end);
+                                // Fetch the course from DB
+                                List<Course> allCourses = teacherService.getAllCourses();
+                                for (Course c : allCourses) {
+                                    if (c.getCourseId().equals(courseId)) {
+                                        showCourseDetailsPopup(c);
+                                        break;
+                                    }
+                                }
+                            }
+                        }
+                    }
                 }
             });
         }
@@ -396,11 +462,15 @@ public class Main extends JFrame {
             JPasswordField pass = new ModernPasswordField(15);
 
             JPanel panel = new JPanel(new GridLayout(3, 2, 10, 10));
-            panel.add(new JLabel("Roll No:")); panel.add(roll);
-            panel.add(new JLabel("Name:")); panel.add(name);
-            panel.add(new JLabel("Password:")); panel.add(pass);
+            panel.add(new JLabel("Roll No:"));
+            panel.add(roll);
+            panel.add(new JLabel("Name:"));
+            panel.add(name);
+            panel.add(new JLabel("Password:"));
+            panel.add(pass);
 
-            int op = JOptionPane.showConfirmDialog(this, panel, "Add New Student", JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE);
+            int op = JOptionPane.showConfirmDialog(this, panel, "Add New Student", JOptionPane.OK_CANCEL_OPTION,
+                    JOptionPane.PLAIN_MESSAGE);
             if (op == JOptionPane.OK_OPTION) {
                 teacherService.addStudent(roll.getText(), name.getText(), new String(pass.getPassword()));
                 loadData(null);
@@ -413,15 +483,17 @@ public class Main extends JFrame {
             Student fresh = loginService.loginStudent(s.getRollNumber(), s.getPassword());
             detailsModel.addElement("Records for " + fresh.getName());
             detailsModel.addElement(" "); // spacer
-            if(fresh.getRegisteredCourses().isEmpty()) {
+            if (fresh.getRegisteredCourses().isEmpty()) {
                 detailsModel.addElement("No courses currently registered.");
             } else {
-                fresh.getRegisteredCourses().forEach(c -> detailsModel.addElement("📘 " + c.getCourseName() + " (" + c.getCourseId() + ")"));
+                fresh.getRegisteredCourses().forEach(
+                        c -> detailsModel.addElement("📘 " + c.getCourseName() + " (" + c.getCourseId() + ")"));
             }
         }
 
         public void loadData(Teacher t) {
-            if (t != null) adminLbl.setText("Admin Dashboard | " + t.getName());
+            if (t != null)
+                adminLbl.setText("Admin Dashboard | " + t.getName());
             studentListModel.clear();
             teacherService.getAllStudents().forEach(studentListModel::addElement);
             detailsModel.clear();
@@ -466,6 +538,84 @@ public class Main extends JFrame {
         JOptionPane.showMessageDialog(this, msg, "Success", JOptionPane.INFORMATION_MESSAGE);
     }
 
+    // ==========================================
+    // COURSE DETAILS POPUP
+    // ==========================================
+    private void showCourseDetailsPopup(Course course) {
+        List<Student> enrolled = studentService.getStudentsEnrolledInCourse(course.getCourseId());
+
+        // Build the popup panel
+        JPanel popupPanel = new JPanel();
+        popupPanel.setLayout(new BoxLayout(popupPanel, BoxLayout.Y_AXIS));
+        popupPanel.setBackground(CARD_COLOR);
+        popupPanel.setBorder(new EmptyBorder(20, 25, 20, 25));
+
+        // Course Icon + Title
+        JLabel iconLabel = new JLabel("📘", SwingConstants.CENTER);
+        iconLabel.setFont(new Font("Segoe UI Emoji", Font.PLAIN, 40));
+        iconLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
+        popupPanel.add(iconLabel);
+        popupPanel.add(Box.createVerticalStrut(10));
+
+        JLabel titleLabel = new JLabel(course.getCourseName());
+        titleLabel.setFont(HEADER_FONT.deriveFont(22f));
+        titleLabel.setForeground(TEXT_DARK);
+        titleLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
+        popupPanel.add(titleLabel);
+        popupPanel.add(Box.createVerticalStrut(5));
+
+        JLabel idLabel = new JLabel("Course ID: " + course.getCourseId());
+        idLabel.setFont(REGULAR_FONT);
+        idLabel.setForeground(TEXT_MUTED);
+        idLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
+        popupPanel.add(idLabel);
+
+        // Divider
+        popupPanel.add(Box.createVerticalStrut(15));
+        JSeparator sep = new JSeparator();
+        sep.setMaximumSize(new Dimension(Integer.MAX_VALUE, 1));
+        sep.setForeground(new Color(229, 231, 235));
+        popupPanel.add(sep);
+        popupPanel.add(Box.createVerticalStrut(15));
+
+        // Enrollment Stats
+        JLabel enrollLabel = new JLabel("👥 Enrolled Students: " + enrolled.size());
+        enrollLabel.setFont(TITLE_FONT.deriveFont(15f));
+        enrollLabel.setForeground(PRIMARY_COLOR);
+        enrollLabel.setAlignmentX(Component.LEFT_ALIGNMENT);
+        popupPanel.add(enrollLabel);
+        popupPanel.add(Box.createVerticalStrut(10));
+
+        if (enrolled.isEmpty()) {
+            JLabel noStudents = new JLabel("   No students enrolled yet.");
+            noStudents.setFont(REGULAR_FONT);
+            noStudents.setForeground(TEXT_MUTED);
+            noStudents.setAlignmentX(Component.LEFT_ALIGNMENT);
+            popupPanel.add(noStudents);
+        } else {
+            for (Student s : enrolled) {
+                JLabel studentLabel = new JLabel("   👤 " + s.getName() + " (" + s.getRollNumber() + ")");
+                studentLabel.setFont(REGULAR_FONT);
+                studentLabel.setForeground(TEXT_DARK);
+                studentLabel.setAlignmentX(Component.LEFT_ALIGNMENT);
+                popupPanel.add(studentLabel);
+                popupPanel.add(Box.createVerticalStrut(4));
+            }
+        }
+
+        // Wrap in scroll pane for many students
+        JScrollPane scrollPane = new JScrollPane(popupPanel);
+        scrollPane.setBorder(null);
+        scrollPane.setPreferredSize(new Dimension(380, Math.min(400, 200 + enrolled.size() * 30)));
+        scrollPane.getViewport().setBackground(CARD_COLOR);
+
+        JOptionPane.showMessageDialog(
+                this,
+                scrollPane,
+                "Course Details",
+                JOptionPane.PLAIN_MESSAGE);
+    }
+
     // --- Custom Rounded Panel ---
     static class RoundedPanel extends JPanel {
         private final int radius;
@@ -508,8 +658,15 @@ public class Main extends JFrame {
             setPreferredSize(new Dimension(150, 40));
 
             addMouseListener(new MouseAdapter() {
-                public void mouseEntered(MouseEvent e) { isHovered = true; repaint(); }
-                public void mouseExited(MouseEvent e) { isHovered = false; repaint(); }
+                public void mouseEntered(MouseEvent e) {
+                    isHovered = true;
+                    repaint();
+                }
+
+                public void mouseExited(MouseEvent e) {
+                    isHovered = false;
+                    repaint();
+                }
             });
         }
 
@@ -531,8 +688,7 @@ public class Main extends JFrame {
             setFont(REGULAR_FONT);
             setBorder(BorderFactory.createCompoundBorder(
                     BorderFactory.createLineBorder(new Color(209, 213, 219), 1),
-                    new EmptyBorder(10, 10, 10, 10)
-            ));
+                    new EmptyBorder(10, 10, 10, 10)));
         }
     }
 
@@ -542,8 +698,7 @@ public class Main extends JFrame {
             setFont(REGULAR_FONT);
             setBorder(BorderFactory.createCompoundBorder(
                     BorderFactory.createLineBorder(new Color(209, 213, 219), 1),
-                    new EmptyBorder(10, 10, 10, 10)
-            ));
+                    new EmptyBorder(10, 10, 10, 10)));
         }
     }
 
