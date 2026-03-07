@@ -7,6 +7,7 @@ import jakarta.persistence.EntityManager;
 public class LoginService {
 
     public Student loginStudent(String rollNumber, String password) {
+        rollNumber = rollNumber.toUpperCase();
         try (EntityManager em = JPAUtil.getEntityManager()) {
 
             Student s = em.find(Student.class, rollNumber);
@@ -21,6 +22,7 @@ public class LoginService {
     }
 
     public Teacher loginTeacher(String employmentId, String password) {
+        employmentId = employmentId.toUpperCase();
         try (EntityManager em = JPAUtil.getEntityManager()) {
             Teacher t = em.find(Teacher.class, employmentId);
 
