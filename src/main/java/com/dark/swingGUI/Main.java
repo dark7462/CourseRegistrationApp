@@ -886,7 +886,7 @@ public class Main extends JFrame {
         }
 
         void searchStudent() {
-            String roll = searchField.getText().trim();
+            String roll = searchField.getText().trim().toUpperCase();
             if (roll.isEmpty()) {
                 refAll();
                 return;
